@@ -2,7 +2,7 @@
 
 A small job marketplace API built with FastAPI. It manages jobs and applications. Storage is in-memory, so no database is required.
 
-## How to run
+## How to Run
 
 Requirements:
 
@@ -19,7 +19,7 @@ uv reads `pyproject.toml` and `uv.lock`, creates a virtual environment, and inst
 
 The server runs at `http://127.0.0.1:8000`. Interactive API docs are at `http://127.0.0.1:8000/docs`.
 
-## Design overview
+## Design Overview
 
 - `main.py` defines the FastAPI app and routes. Handlers are thin. They call the store and map results to responses.
 - `classes/` defines the Pydantic models. `JobCreate` and `ApplicationCreate` are the request payloads. Timestamps are generated on the server side.
@@ -44,10 +44,10 @@ Status codes follow a simple convention:
 - Data is not persistent. It is held in memory and lost when the server stops.
 - Job and application IDs auto-increment.
 - Status and candidate name filters are case-insensitive.
-- A candidate may apply to multiple jobs and may apply to the same job more than once.
-- List endpoint limits are applied after filtering.
+- A candidate may apply to multiple jobs but cannot apply to the same job more than once.
+- Pagination is applied to the list endpoints after filtering.
 
-## What I would improve with more time
+## Areas For Improvement
 
 - Add real persistence with a database such as SQLite or Postgres.
 - Add proper pagination instead of just a limit.
