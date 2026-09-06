@@ -36,6 +36,70 @@ Status codes follow a simple convention:
 - invalid action: 400
 - successful create: 201
 
+## Example Requests
+
+The server needs to be running for these to work. Each command is a `curl` that either reads data (GET) or sends new data (POST). Two variants are shown: Linux Bash and Windows CMD. GET commands are the same in both, so they're only listed once.
+
+### List all jobs (optionally filter by status)
+
+```sh
+curl http://127.0.0.1:8000/jobs
+curl "http://127.0.0.1:8000/jobs?status=OPEN"
+curl "http://127.0.0.1:8000/jobs?page=1&page_size=10"
+```
+
+### Get one job
+
+```sh
+curl http://127.0.0.1:8000/jobs/1
+```
+
+### Create a job
+
+Linux Bash:
+
+```sh
+curl -X POST http://127.0.0.1:8000/jobs/create \
+  -H "Content-Type: application/json" \
+  -d '{"title": "Backend Engineer", "description": "Build backend services.", "location": "Melbourne"}'
+```
+
+Windows CMD:
+
+```cmd
+curl -X POST http://127.0.0.1:8000/jobs/create -H "Content-Type: application/json" -d "{\"title\": \"Backend Engineer\", \"description\": \"Build backend services.\", \"location\": \"Melbourne\"}"
+```
+
+### Close a job
+
+```sh
+curl -X POST http://127.0.0.1:8000/jobs/1/close
+```
+
+### List applications (optionally filter by job or candidate)
+
+```sh
+curl http://127.0.0.1:8000/applications
+curl "http://127.0.0.1:8000/applications?job_id=1"
+curl "http://127.0.0.1:8000/applications?candidate_name=Alice"
+```
+
+### Submit an application
+
+Linux Bash:
+
+```sh
+curl -X POST http://127.0.0.1:8000/applications/create \
+  -H "Content-Type: application/json" \
+  -d '{"job_id": 1, "candidate_name": "Alice", "candidate_email": "alice@example.com"}'
+```
+
+Windows CMD:
+
+```cmd
+curl -X POST http://127.0.0.1:8000/applications/create -H "Content-Type: application/json" -d "{\"job_id\": 1, \"candidate_name\": \"Alice\", \"candidate_email\": \"alice@example.com\"}"
+```
+
 ## Assumptions
 
 - uv already installed.
