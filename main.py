@@ -64,6 +64,18 @@ async def create_job(job: JobCreate):
         location=job.location,
     )
 
+# Open a job posting
+@app.post("/jobs/{job_id}/open")
+async def open_job(job_id: int):
+    try:
+        job = store.open_job(job_id)
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+
+    if not job:
+        raise HTTPException(status_code=404, detail="Job not found")
+
+    return job
 
 # Close a job posting
 @app.post("/jobs/{job_id}/close")

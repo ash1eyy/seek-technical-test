@@ -39,6 +39,19 @@ class Store:
         start = (page - 1) * page_size
         return jobs[start : start + page_size]
 
+    def open_job(self, job_id):
+        job = self.get_job(job_id)
+
+        if not job:
+            return None
+
+        if job["status"] == "OPEN":
+            raise ValueError("Job is already open")
+
+        job["status"] = "OPEN"
+
+        return job
+
     def close_job(self, job_id):
         job = self.get_job(job_id)
 
@@ -93,7 +106,7 @@ class Store:
             applications = [
                 app
                 for app in applications
-                if app["candidate_name"].lower() == candidate_name.lower()
+                if candidate_name.lower() in app["candidate_name"].lower()
             ]
 
         start = (page - 1) * page_size
