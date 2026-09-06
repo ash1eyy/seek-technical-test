@@ -36,8 +36,12 @@ app = FastAPI(lifespan=lifespan)
 
 # List all job postings, optionally filtered by status
 @app.get("/jobs")
-async def read_jobs(status: str | None = Query(None), limit: int = 10):
-    return store.list_jobs(status=status, limit=limit)
+async def read_jobs(
+    status: str | None = Query(None),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1),
+):
+    return store.list_jobs(status=status, page=page, page_size=page_size)
 
 
 # Get details for a single job posting
@@ -80,10 +84,14 @@ async def close_job(job_id: int):
 async def read_applications(
     job_id: int | None = Query(None),
     candidate_name: str | None = Query(None),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1),
 ):
     return store.list_applications(
         job_id=job_id,
         candidate_name=candidate_name,
+        page=page,
+        page_size=page_size,
     )
 
 
