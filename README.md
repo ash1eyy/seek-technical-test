@@ -50,8 +50,6 @@ Status codes follow a simple convention:
 ## Areas For Improvement
 
 - Add real persistence with a database such as SQLite or Postgres.
-- Add proper pagination instead of just a limit.
-- Prevent duplicate applications for the same candidate and job.
 - Add structured logging and consistent error responses.
 - Add a `tests/` directory with pytest and TestClient coverage.
 - Add authentication, for example to restrict who can close a job.
