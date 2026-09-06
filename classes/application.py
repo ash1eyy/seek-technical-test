@@ -1,9 +1,16 @@
-from datetime import date
+from datetime import datetime
 from pydantic import BaseModel
+
 
 class Application(BaseModel):
     id: int
-    title: str
+    job_id: int
     candidate_name: str
     candidate_email: str
-    submitted_at: date
+    submitted_at: datetime
+
+
+class ApplicationCreate(BaseModel):
+    job_id: int
+    candidate_name: str
+    candidate_email: str
