@@ -30,13 +30,14 @@ class Store:
 
         return None
 
-    def list_jobs(self, status=None, limit=10):
+    def list_jobs(self, status=None, page=1, page_size=10):
         jobs = self.jobs
 
         if status:
             jobs = [job for job in jobs if job["status"] == status.upper()]
 
-        return jobs[:limit]
+        start = (page - 1) * page_size
+        return jobs[start : start + page_size]
 
     def close_job(self, job_id):
         job = self.get_job(job_id)
@@ -60,6 +61,13 @@ class Store:
         if job["status"] == "CLOSED":
             raise ValueError("Job is closed and no longer accepting applications")
 
+        for app in self.applications:
+            if (
+                app["job_id"] == job_id
+                and app["candidate_email"].lower() == candidate_email.lower()
+            ):
+                raise ValueError("Candidate has already applied for this job")
+
         application = {
             "id": self._next_application_id,
             "job_id": job_id,
@@ -73,7 +81,7 @@ class Store:
 
         return application
 
-    def list_applications(self, job_id=None, candidate_name=None):
+    def list_applications(self, job_id=None, candidate_name=None, page=1, page_size=10):
         applications = self.applications
 
         if job_id:
@@ -88,4 +96,5 @@ class Store:
                 if app["candidate_name"].lower() == candidate_name.lower()
             ]
 
-        return applications
+        start = (page - 1) * page_size
+        return applications[start : start + page_size]
