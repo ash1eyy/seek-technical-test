@@ -28,9 +28,13 @@ The server runs at `http://127.0.0.1:8000`. Interactive API docs are at `http://
 ├── models/
 │   ├── job.py               # Pydantic model for creating jobs
 │   └── application.py       # Pydantic model for creating applications
-└── routers/
-    ├── jobs.py              # Job-related endpoints
-    └── applications.py      # Application-related endpoints
+├── routers/
+│   ├── jobs.py              # Job-related endpoints
+│   └── applications.py      # Application-related endpoints
+└── tests/
+    ├── conftest.py          # Shared fixtures (store, TestClient)
+    ├── test_store.py        # Unit tests for Store business logic
+    └── test_api.py          # Integration tests for endpoints
 ```
 
 ## Design Overview
@@ -117,6 +121,50 @@ Windows CMD:
 curl -X POST http://127.0.0.1:8000/applications/create -H "Content-Type: application/json" -d "{\"job_id\": 1, \"candidate_name\": \"Alice\", \"candidate_email\": \"alice@example.com\"}"
 ```
 
+## Running Tests
+
+First, sync the dev dependencies:
+
+Linux Bash:
+
+```sh
+uv sync --extra dev
+```
+
+Windows CMD:
+
+```cmd
+uv sync --extra dev
+```
+
+Run all tests:
+
+Linux Bash:
+
+```sh
+uv run pytest tests/ -v
+```
+
+Windows CMD:
+
+```cmd
+uv run pytest tests/ -v
+```
+
+Run only the unit tests (Store logic, no HTTP):
+
+```sh
+uv run pytest tests/test_store.py -v
+```
+
+Run only the API integration tests:
+
+```sh
+uv run pytest tests/test_api.py -v
+```
+
+Tests use a fresh in-memory store per test, so they don't depend on the seed data from the lifespan. You do not need the server running to execute them.
+
 ## Assumptions
 
 - Python & uv already installed.
@@ -132,7 +180,6 @@ curl -X POST http://127.0.0.1:8000/applications/create -H "Content-Type: applica
 
 - Add real persistence with a database such as SQLite or Postgres.
 - Add structured logging and consistent error responses.
-- Add a `tests/` directory with pytest and TestClient coverage.
 - Add authentication, for example to restrict who can close a job.
 - Use unique identifiers for IDs instead of plain integers.
 - Add format validation for emails, names, job status, etc.
