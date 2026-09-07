@@ -57,6 +57,58 @@ Status codes follow a simple convention:
 - invalid action: 400
 - successful create: 201
 
+### Diagrams
+
+#### Architecture Diagram
+
+```mermaid
+graph TD
+    Client[HTTP Client] -->|Request| App[main.py<br/>FastAPI App + Lifespan]
+    App --> R1[routers/jobs.py]
+    App --> R2[routers/applications.py]
+    R1 -->|Depends| Dep[dependencies.py<br/>get_store]
+    R2 -->|Depends| Dep
+    Dep -->|reads| State[app.state.store]
+    State --> Store[store.py<br/>Business Logic + Data]
+    R1 -->|uses| Models[models/<br/>Pydantic Schemas]
+    R2 -->|uses| Models
+```
+
+#### Sequence Diagram
+
+The sequence diagram below shows what happens when a client submits a job application.
+
+```mermaid
+sequenceDiagram
+    participant C as HTTP Client
+    participant R as Router<br/>(applications.py)
+    participant D as Dependency<br/>(get_store)
+    participant S as Store<br/>(store.py)
+
+    C->>R: POST /applications/create<br/>{job_id, name, email}
+    R->>D: Depends(get_store)
+    D->>D: Read app.state.store
+    D-->>R: Return store instance
+    R->>S: store.add_application(...)
+    S->>S: Job exists?
+    alt Job not found
+        S-->>R: Return None
+        R-->>C: 404 Not Found
+    else Job is closed
+        S->>S: Job is closed?
+        S-->>R: Raise ValueError
+        R-->>C: 400 Bad Request
+    else Duplicate email
+        S->>S: Same email + job already applied?
+        S-->>R: Raise ValueError
+        R-->>C: 400 Bad Request
+    else Valid
+        S->>S: Create application, assign ID
+        S-->>R: Return application dict
+        R-->>C: 201 Created
+    end
+```
+
 ## Example Requests
 
 The server needs to be running for these to work. Each command is a `curl` that either reads data (GET) or sends new data (POST). Two variants are shown: Linux Bash and Windows CMD. GET commands are the same in both, so they're only listed once.
