@@ -19,16 +19,33 @@ uv reads `pyproject.toml` and `uv.lock`, creates a virtual environment, and inst
 
 The server runs at `http://127.0.0.1:8000`. Interactive API docs are at `http://127.0.0.1:8000/docs`.
 
+## Project Structure
+
+```
+├── main.py                  # App setup, lifespan, router registration
+├── dependencies.py          # Dependency injection (provides the store to routers)
+├── store.py                 # In-memory data store and business logic
+├── models/
+│   ├── job.py               # Pydantic model for creating jobs
+│   └── application.py       # Pydantic model for creating applications
+└── routers/
+    ├── jobs.py              # Job-related endpoints
+    └── applications.py      # Application-related endpoints
+```
+
 ## Design Overview
 
-- `main.py` defines the FastAPI app and routes. Handlers are thin. They call the store and map results to responses.
-- `classes/` defines the Pydantic models. `JobCreate` and `ApplicationCreate` are the request payloads. Timestamps are generated on the server side.
-- `store.py` defines the `Store` class. It keeps jobs and applications in Python lists. It owns the business rules:
+- `main.py` creates the FastAPI app, handles startup via the lifespan function, and registers the routers. It's kept pretty minimal.
+- `routers/jobs.py` has all the job endpoints (list, get, create, open, close).
+- `routers/applications.py` has the application endpoints (list, create).
+- `dependencies.py` provides a `get_store` function so the routers can access the store without importing it directly. The store lives on `app.state` after startup.
+- `models/` defines the Pydantic models. `JobCreate` and `ApplicationCreate` are the request payloads. Timestamps are generated server-side.
+- `store.py` defines the `Store` class. Jobs and applications are stored in plain Python lists. It handles the business rules:
   - a closed job cannot be closed again
   - an application cannot be created for a job that does not exist
   - an application cannot be created for a closed job
 
-On startup, the lifespan seeds three sample jobs. Two are open and one is closed. This way the list endpoints return data right away.
+On startup the lifespan seeds three sample jobs. Two are open, one is closed. That way the list endpoints return data immediately.
 
 Status codes follow a simple convention:
 
