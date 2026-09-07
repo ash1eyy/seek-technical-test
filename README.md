@@ -117,5 +117,6 @@ curl -X POST http://127.0.0.1:8000/applications/create -H "Content-Type: applica
 - Add structured logging and consistent error responses.
 - Add a `tests/` directory with pytest and TestClient coverage.
 - Add authentication, for example to restrict who can close a job.
-- Add format validation for emails, names, phone number etc.
+- Use unique identifiers for IDs instead of plain integers.
+- Add format validation for emails, names, job status, etc.
 - Move settings such as the default limit and the seed toggle into environment variables.

@@ -2,8 +2,8 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Query
 
-from classes.job import JobCreate
-from classes.application import ApplicationCreate
+from models.job import JobCreate
+from models.application import ApplicationCreate
 from store import Store
 
 store = Store()
