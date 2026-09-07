@@ -102,7 +102,7 @@ curl -X POST http://127.0.0.1:8000/applications/create -H "Content-Type: applica
 
 ## Assumptions
 
-- uv already installed.
+- Python & uv already installed.
 - No authentication or authorisation is required.
 - No frontend.
 - Data is not persistent. It is held in memory and lost when the server stops.
@@ -117,4 +117,5 @@ curl -X POST http://127.0.0.1:8000/applications/create -H "Content-Type: applica
 - Add structured logging and consistent error responses.
 - Add a `tests/` directory with pytest and TestClient coverage.
 - Add authentication, for example to restrict who can close a job.
+- Add format validation for emails, names, phone number etc.
 - Move settings such as the default limit and the seed toggle into environment variables.
